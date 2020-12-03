@@ -5,6 +5,8 @@ const router = require('./routes');
 
 const app = express();
 
+app.use(cors());
+
 connectDB();
 const Port = process.env.Port || 4000;
 

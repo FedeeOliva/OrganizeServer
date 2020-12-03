@@ -20,5 +20,11 @@ router.use('/api/auth', require('./auth'));
 //tableros
 router.use('/api/boards', require('./boards'));
 
+//listas
+router.use('/api/lists', require('./lists'));
+
+//tareas
+router.use('/api/tasks', require('./tasks'));
+
 
 module.exports = router;

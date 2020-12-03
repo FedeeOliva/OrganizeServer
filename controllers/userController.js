@@ -1,22 +1,22 @@
 const User = require('../models/User');
 const bcryptjs = require('bcryptjs');
-const {validationResult} = require('express-validator');
 const jwt = require('jsonwebtoken');
 
 exports.create = async(req,res) =>{
-	//Revisar si hay errores que vengan del check
-	const errores = validationResult(req);
-	if(!errores.isEmpty()){
-		return res.status(400).json({errores: errores.array()})
-	}
 	//extraer email y pw
-	const{email, password} = req.body;
+	const{email, username, password} = req.body;
 	
 	try{
+		if(await User.findOne({username})){
+			return res.status(400).json({
+				msg: 'El nombre de usuario ya se encuentra registrado'
+			})
+		}
+
 		let user = await User.findOne({email});
 		if(user){
 			return res.status(400).json({
-				msg: 'El usuario ya existe'
+				msg: 'El email ya se encuentra registrado'
 			})
 		}
 

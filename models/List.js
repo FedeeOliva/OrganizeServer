@@ -1,5 +1,5 @@
 const {Schema, model} = require('mongoose');
-const Task = require('./Taks');
+const {TaskSchema} = require('./Task');
 
 const ListSchema = new Schema({
 	name:{
@@ -7,7 +7,10 @@ const ListSchema = new Schema({
 		required: true,
 		trim: true
 	},
-	/*task:[Task]*/
+	tasks:{
+		type: [TaskSchema],
+		default: []
+	}
 
 	})
 

@@ -4,14 +4,9 @@ const {validationResult} = require('express-validator');
 const jwt = require('jsonwebtoken');
 
 exports.authenticate = async (req ,res) =>{
-	//sin errores:
-	const errores = validationResult(req);
-	if(!errores.isEmpty()){
-		return res.status(400).json({errores: errores.array()})
-	}
-
+	
 	const {email, password} = req.body;
-
+	
 	try{
 		let user = await User.findOne({email});
 		if(!user){
@@ -48,11 +43,10 @@ exports.authenticate = async (req ,res) =>{
 
 }
 
-
 exports.getUser = async (req, res) =>{
 	//el req.user viene del jwt que escribe el middleware auth
 	try{
-		const user = await User.findById(req.user.id).select('password');
+		const user = await User.findById(req.user.id).select('username');
 		res.json({user});
 	}catch(error){
 		console.log(error);
