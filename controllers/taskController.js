@@ -5,7 +5,6 @@ const {List} = require('../models/List');
 
 exports.create = async (req, res) =>{
 	try{
-		console.log('entrando peticion');
 		const {idBoard, idList} = req.query;
 		//Ver si el tablero existe y es el dueño
 		let board = await Board.findById(idBoard);

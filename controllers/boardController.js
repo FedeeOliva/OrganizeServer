@@ -1,5 +1,5 @@
 const Board = require('../models/Board');
-const apikey = "17758117-18215cb7c2e384f06943fcff0";
+//const apikey = "17758117-18215cb7c2e384f06943fcff0";
 
 exports.create = async(req, res) =>{
 	try{
@@ -16,10 +16,14 @@ exports.create = async(req, res) =>{
 
 exports.getBoard = async (req, res) =>{
 	try{
-		const board = await Board.findById(req.params.id); 			
-		res.status(200).json({board});
+		const board = await Board.findById(req.params.id);
+		if(!board){
+			res.status(400).json({msg:'El tablero no existe'});
+		}else{
+			res.status(200).json({board});
+		}
+		
 	}catch(error){
-		console.log(error);
 		res.status(500).json({msg:'No se pudo recuperar el tablero'});
 	}
 }

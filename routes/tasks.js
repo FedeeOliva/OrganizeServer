@@ -10,7 +10,8 @@ const verifyError = require('../middleware/verifyError');
 router.post('/', 
 		auth,
 		[
-			check('name', 'La tarea debe tener un nombre')
+			check('name', 'La tarea debe tener un nombre').not().isEmpty(),
+			check('_id','El id no puede estar vacio').not().isEmpty()
 		],
 		verifyError,
 		taskController.create
