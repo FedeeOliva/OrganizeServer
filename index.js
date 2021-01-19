@@ -8,10 +8,11 @@ const app = express();
 app.use(cors());
 
 connectDB();
-const Port = process.env.Port || 4000;
+const port = process.env.PORT || 4000;
+const host = process.env.HOST || '0.0.0.0'
 
 app.use(router);
 
-app.listen(Port, () =>{
-	console.log(`Servidor funcionando en http://localhost:${Port}`);
+app.listen(port, host, () =>{
+	console.log(`Servidor funcionando en ${port}`);
 })
