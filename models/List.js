@@ -1,11 +1,7 @@
 const {Schema, model} = require('mongoose');
 const {TaskSchema} = require('./Task');
 
-const ListSchema = new Schema({
-	_id :{
-		type: String,
-		required: true
-	},
+const ListSchema = new Schema({	
 	name:{
 		type: String,
 		required: true,
@@ -14,10 +10,12 @@ const ListSchema = new Schema({
 	tasks:{
 		type: [TaskSchema],
 		default: []
+	},
+	board:{
+		type: Schema.Types.ObjectId,
+		ref: 'Board'
 	}
 
 	})
 
-const List = model('List', ListSchema);
-
-module.exports = {List, ListSchema};
+module.exports = model('List', ListSchema);

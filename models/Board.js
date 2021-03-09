@@ -1,6 +1,4 @@
 const {Schema, model} = require('mongoose');
-const {ListSchema} = require('./List');
-
 
 const BoardSchema = new Schema({
 	name: {
@@ -18,7 +16,7 @@ const BoardSchema = new Schema({
 		trim: true,
 	},		
 	lists: {
-		type: [ListSchema],
+		type: Array,
 		default: []
 	}
 });

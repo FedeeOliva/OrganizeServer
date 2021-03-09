@@ -1,4 +1,4 @@
-const {List} = require('../models/List');
+const List = require('../models/List');
 const Board = require('../models/Board');
 
 //crearia la lista y seria como actualizar el tablero
@@ -17,15 +17,13 @@ exports.create = async (req, res) =>{
 		}	
 		//Crear la tarea
 		const list = new List(req.body);
-		let newBoard = {
-			lists: [...board.lists, list]
-		}
+		list.board = idBoard;
 
 		//insertarla en el tablero
-		await Board.findByIdAndUpdate({_id: idBoard},{$set:
-			newBoard},{new: true});
+		await list.save();
 
-		res.status(200).json({msg: "Lista creada correctamente"});
+
+		res.status(200).json({list});
 	}
 	catch(error){
 		console.log(error);
@@ -36,21 +34,19 @@ exports.create = async (req, res) =>{
 
 exports.delete = async (req, res) =>{
 	try{
-		const {idBoard, idList} = req.query;
-		let board = await Board.findById(idBoard);
-		//verificar si el proyecto existe
-		if(!board){
-			res.status(404).json({msg: 'Tablero no encontrado'});
-		}
-		//verificar si es el dueño
-		if(board.owner.toString() !== req.user.id){
-			res.status(401).json({msg: 'Usted no puede eliminar listas en este Tablero'});
-		}
-		board.lists = board.lists.filter( el => el._id !== idList);
-		
-		await Board.findByIdAndUpdate({_id: idBoard},{$set:
-			board},{new: true});
+		const {id} = req.params;
+		const list = await List.findById(id);
 
+		if(!list){
+			return res.status(404).json({msg: 'La lista no existe'});
+		}
+
+		const board = await Board.findById(list.board);
+		if(board.owner.toString() !== req.user.id){
+			return res.status(401).json({msg: 'No autorizado'});
+		}
+
+		await List.findByIdAndRemove(id);
 		res.status(200).json({msg: 'La lista ha sido eliminada'});
 
 	}catch(error){
@@ -61,10 +57,11 @@ exports.delete = async (req, res) =>{
 
 //Recibe una lista y actualiza
 exports.update = async (req, res) =>{
-	try{
-		const {idBoard} = req.query;
+	try{		
 		const {list} = req.body;
-		let board = await Board.findById(idBoard);
+
+		let board = await Board.findById(list.board);
+
 		//verificar si el proyecto existe
 		if(!board){
 			res.status(404).json({msg: 'Tablero no encontrado'});
@@ -72,13 +69,9 @@ exports.update = async (req, res) =>{
 		//verificar si es el dueño
 		if(board.owner.toString() !== req.user.id){
 			res.status(401).json({msg: 'Usted no puede actualizar listas en este Tablero'});
-		}
-		//Remplazo 
-		const oldListIndex = board.lists.findIndex( el => el._id === list._id);
-		board.lists[oldListIndex] = list;
+		}	
 		
-		await Board.findByIdAndUpdate({_id: idBoard},{$set:
-			board},{new: true});
+		await List.findByIdAndUpdate({_id: list._id}, {$set: list});
 
 		res.status(200).json({msg: 'La lista ha sido actualizada'});
 

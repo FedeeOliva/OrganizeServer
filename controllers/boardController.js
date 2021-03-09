@@ -1,5 +1,5 @@
 const Board = require('../models/Board');
-//const apikey = "17758117-18215cb7c2e384f06943fcff0";
+const List = require('../models/List');
 
 exports.create = async(req, res) =>{
 	try{
@@ -10,7 +10,7 @@ exports.create = async(req, res) =>{
 
 	}catch(error){
 		console.log(error);
-		res.status(500).json({msg: 'No se ha podido crear el proyecto'});
+		res.status(500).json({msg: 'No se ha podido crear el tablero'});
 	}
 }
 
@@ -19,10 +19,12 @@ exports.getBoard = async (req, res) =>{
 		const board = await Board.findById(req.params.id);
 		if(!board){
 			res.status(400).json({msg:'El tablero no existe'});
-		}else{
-			res.status(200).json({board});
 		}
+		const lists = await List.find({board: req.params.id})
+		board.lists = lists;
+		res.status(200).json({board});
 		
+	
 	}catch(error){
 		res.status(500).json({msg:'No se pudo recuperar el tablero'});
 	}
@@ -41,7 +43,9 @@ exports.getBoards = async (req, res) =>{
 
 exports.delete = async (req, res) =>{
 	try{
-		let board = await Board.findById(req.params.id);
+		const {id} = req.params;
+
+		let board = await Board.findById(id);
 
 		if(!board){
 			return res.status(404).json({msg: 'El tablero no fue encontrado'});
@@ -50,7 +54,14 @@ exports.delete = async (req, res) =>{
 		if(board.owner.toString() !== req.user.id){
 			return res.status(401).json({msg: "No autorizado"});
 		}
-		await Board.findOneAndRemove({_id : req.params.id});
+
+		//borrar todas las listas de este tablero:
+		const lists = await List.find({board: id});
+		await lists.forEach( async list => {
+			await List.findByIdAndRemove(list.id);
+		})
+
+		await Board.findOneAndRemove({_id : id});
 
 
 		res.status(200).json({msg: 'Tablero eliminado'});

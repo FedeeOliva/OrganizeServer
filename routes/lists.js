@@ -9,8 +9,7 @@ const verifyError = require('../middleware/verifyError');
 //Crear listas  query: idBoard
 router.post('/',
 	auth,[
-		check('name','El nombre de la lista no puede estar vacio').not().isEmpty(),
-		check('_id','El id no puede estar vacio').not().isEmpty()
+		check('name','El nombre de la lista no puede estar vacio').not().isEmpty()
 	],
 	verifyError,
 	listController.create
@@ -19,7 +18,7 @@ router.post('/',
 module.exports = router;
 
 //Eliminar una lista
-router.delete('/', 
+router.delete('/:id', 
 	auth,
 	listController.delete
 	)
