@@ -9,16 +9,17 @@ exports.authenticate = async (req ,res) =>{
 	
 	try{
 		let user = await User.findOne({email});
-		if(!user){
-			return res.status(400).json({msg:'El usuario ingrasado no existe'});
-
+		
+		const passwordCorrect = user === null
+		? false
+		: await bcryptjs.compare(password, user.password);
+	
+		//No dar información de cual de los 2 está incorecto.
+		if(!passwordCorrect){
+			return  res.status(400).json({msg: 'Usuario o contraseña incorrecta'});
 		}
-		const verifyPass = await bcryptjs.compare(password, user.password);
-		if(!verifyPass){
-			return  res.status(400).json({msg: 'La contraseña es incorrecta'});
-		}
 
-		const payload = {
+		const   = {
 			user: {
 				id: user._id
 			}
